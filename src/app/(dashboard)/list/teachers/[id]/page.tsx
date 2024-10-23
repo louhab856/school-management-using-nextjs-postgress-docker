@@ -143,8 +143,8 @@ const SingleTeacherPage = () => {
             <Link className="p-3 rounded-md bg-lamaSkyLight" href={`list/teachers?classId=${2}`}>
               Teacher
             </Link>
-            <Link className="p-3 rounded-md bg-lamaPurpleLight" href="/">
-              Teacher&apos;s Students
+            <Link className="p-3 rounded-md bg-lamaPurpleLight" href={`/list/students?teacherId=${'teacher2'}`}>>
+               Students
             </Link>
             <Link className="p-3 rounded-md bg-lamaYellowLight" href="/">
               Teacher&apos;s Lessons

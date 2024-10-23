@@ -5,18 +5,12 @@ import TableSearch from "@/components/TableSearch";
 import { role, studentsData } from "@/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import prisma from "@/prisma";
+import {ITEM_PER_PAGE} from '@/lib/sttings'
+import { Student } from "@prisma/client";
 
-type Student = {
-  id: number;
-  studentId: string;
-  name: string;
-  email?: string;
-  photo: string;
-  phone?: string;
-  grade: number;
-  class: string;
-  address: string;
-};
+
+type StudentList = Student & {class:Student[]}
 
 const columns = [
   {
@@ -48,14 +42,14 @@ const columns = [
     accessor: "action",
   },
 ];
-const renderRow = (item: Student) => (
+const renderRow = (item: StudentList) => (
   <tr
     key={item.id}
     className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
   >
     <td className="flex items-center gap-4 p-4">
       <Image
-        src={item.photo}
+        src={item.img || "/noAvatar.png"}
         alt=""
         width={40}
         height={40}
@@ -63,11 +57,11 @@ const renderRow = (item: Student) => (
       />
       <div className="flex flex-col">
         <h3 className="font-semibold">{item.name}</h3>
-        <p className="text-xs text-gray-500">{item.class}</p>
+        <p className="text-xs text-gray-500">{item.class.name}</p>
       </div>
     </td>
-    <td className="hidden md:table-cell">{item.studentId}</td>
-    <td className="hidden md:table-cell">{item.grade}</td>
+    <td className="hidden md:table-cell">{item.username}</td>
+    <td className="hidden md:table-cell">{item.class.name[0]}</td>
     <td className="hidden md:table-cell">{item.phone}</td>
     <td className="hidden md:table-cell">{item.address}</td>
     <td>
@@ -87,9 +81,50 @@ const renderRow = (item: Student) => (
     </td>
   </tr>
 );
-const StudentListPage = () => {
-
-
+  
+const StudentListPage = async ({
+  searchParams,
+}:{
+  searchParams : {[key:string]:string| undefined}
+}) => {
+  const {page,...queryParams}=searchParams
+  const p = page ? parseInt(page): 1
+  const query: Prisma.StudentWhereInput = {}
+  if(queryParams){
+    for(const [key ,value] of Object.entries(queryParams)){
+      if (value !== undefined) {
+        switch (key) {
+            case "teacherId": {
+                query.class = {
+                    lessons: {
+                        some: { teacherId: value }
+                    }
+                };
+                break;
+            }
+            case "search": {
+                query.name = { contains: value, mode: "insensitive" };
+                break;
+            }
+        }
+    }
+    
+    }
+  }
+  const [count, students] = await prisma.$transaction([
+    prisma.student.count({
+      where : query,
+    }),
+    prisma.student.findMany({
+      include:{
+        class:true
+      },
+      where : query,
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+    }),
+  ]);
+  console.log(students)
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
@@ -114,9 +149,9 @@ const StudentListPage = () => {
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={studentsData} />
+      <Table columns={columns} renderRow={renderRow} data={students} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination page={p} count={count } > </Pagination>
     </div>
   );
 };
