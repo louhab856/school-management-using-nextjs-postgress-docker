@@ -124,7 +124,6 @@ const StudentListPage = async ({
       skip: ITEM_PER_PAGE * (p - 1),
     }),
   ]);
-  console.log(students)
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
