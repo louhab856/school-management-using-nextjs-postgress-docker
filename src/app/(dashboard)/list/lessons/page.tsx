@@ -49,7 +49,6 @@ const renderRow = (item: LessonList) => (
     </td>
   </tr>
 );
-// const LessonListPage = () => {
   const LessonListPage = async ({
     searchParams,
   }:{

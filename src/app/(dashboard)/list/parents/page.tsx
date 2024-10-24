@@ -7,7 +7,7 @@ import Image from "next/image";
 
 import prisma from "@/prisma";
 import {ITEM_PER_PAGE} from '@/lib/sttings'
-import { Student, Parent } from "@prisma/client";
+import { Student, Parent, Prisma } from "@prisma/client";
 
 type ParentList = Parent & {students:Student[]}
 
@@ -62,7 +62,6 @@ const columns = [
       </td>
     </tr>
   );
-// const ParentListPage = () => {
  
 const ParentListPage = async ({
   searchParams,
