@@ -51,7 +51,9 @@ const columns = [
       <td className="flex items-center gap-4 p-4">{item.lesson.subject.name}</td>
       <td>{item.lesson.class.name}</td>
       <td className="hidden md:table-cell">{item.lesson.teacher.name}</td>
-      <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.startTime)}</td>
+      <td className="hidden md:table-cell">
+        {new Intl.DateTimeFormat("en-US").format(item.startTime)}
+        </td>
       <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.endTime)}</td>
 
       <td>
