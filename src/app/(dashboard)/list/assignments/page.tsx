@@ -1,3 +1,4 @@
+
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -66,7 +67,8 @@ const renderRow = (item: AssignmentList) => (
   </tr>
 );
 
-const AssignmentListPage = async ({
+const AssignmentListPage = async (
+  {
   searchParams,
 }:{
   searchParams : {[key:string]:string| undefined}
